@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const engine = require('ejs-mate');
@@ -12,12 +16,12 @@ const LocalStrategy = require('passport-local');
 
 
 
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const campgroundRouter = require('./routes/campgrounds');
+const reviewRouter = require('./routes/reviews');
+const UserRouter = require('./routes/user');
+
+
 const User = require('./models/user');
-
-
-
 
 
 mongoose.connect('mongodb://localhost:27017/yelp_camp');
@@ -54,12 +58,6 @@ app.use(methodOverride('_method'));
 app.engine('ejs', engine);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
-app.use((req, res, next) => {
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    next();
-})
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -67,19 +65,31 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
-
-
-app.use('/campgrounds', campgrounds);
-app.use('/campgrounds/:id/reviews', reviews);
-
-
-
-app.get('/fakeUser', async (req, res) => {
-    const user = new User({ email: 'hai@2000', username: 'hai' });
-    const newUser = await User.register(user, "123");
-    res.send(newUser);
+app.use((req, res, next) => {
+    if (!['/login', '/register', '/'].includes(req.originalUrl)) {
+        req.session.returnTo = req.originalUrl;
+    }
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    res.locals.currentUser = req.user;
+    next();
 })
+
+
+
+
+
+app.use('/campgrounds', campgroundRouter);
+app.use('/campgrounds/:id/reviews', reviewRouter);
+app.use('/', UserRouter);
+
+
+
+// app.get('/fakeUser', async (req, res) => {
+//     const user = new User({ email: 'hai@2000', username: 'hai' });
+//     const newUser = await User.register(user, "123");
+//     res.send(newUser);
+// })
 
 
 app.get('/', (req, res) => {
