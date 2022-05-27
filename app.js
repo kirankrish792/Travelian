@@ -24,10 +24,9 @@ const UserRouter = require('./routes/user');
 
 
 const User = require('./models/user');
-const localDb ='mongodb://localhost:27017/yelp_camp'
-const dbUrl=process.env.MONGODB_URI || localDb;
+const dbUrl=process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
 
-mongoose.connect(localDb);
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 
@@ -41,10 +40,12 @@ db.once('open', () => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+const secret = process.env.SECRET;
+
 const store = MongoStore.create(
     {
-        mongoUrl:localDb,
-        secret:'this is a secret',
+        mongoUrl:dbUrl,
+        secret,
         touchAfter:24*3600
     }
 )
@@ -57,7 +58,7 @@ store.on('error', function(error) {
 const sessionConfig = {
     store,
     name:'session',
-    secret: "this is a secret",
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
