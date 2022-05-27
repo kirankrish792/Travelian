@@ -42,7 +42,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 const secret = process.env.SECRET;
 
-const store = MongoStore.create(
+const store = new MongoStore(
     {
         mongoUrl:dbUrl,
         secret,
@@ -119,7 +119,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 })
 
-
-app.listen(3000, () => {
-    console.log("Server is running in port 3000 ");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server is running in port ${port}`);
 })
