@@ -39,7 +39,7 @@
                     </li>
                 </ul>
                 <div class="card-body">
-                    <% if(currentUser && campgrounds.author.equals(currentUser._id)){ %>
+                    <% if(currentUser && campgrounds.author.equals(currentUser._id)|| currentUser.admin){ %>
                         <a href="/campgrounds/<%= campgrounds._id %>/edit" class="card-link btn btn-info">Edit</a>
                         <form class=" card-link d-inline" action="/campgrounds/<%= campgrounds._id %>?_method=DELETE "
                             method="post">
@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div id='map' style='width: 600px; height: 400px;'></div>
+            <div id='map'></div>
             <% if(currentUser){ %>
                 <h2>Hey Leave a Review</h2>
                 <form action="/campgrounds/<%= campgrounds._id %>/reviews " method="post" class="mb-3 needs-validation"
@@ -103,7 +103,7 @@
                                     Review:<%= review.body %>
                                 </p>
                                 <p>
-                                    <% if(currentUser && review.author.equals(currentUser._id)){ %>
+                                    <% if(currentUser && review.author.equals(currentUser._id)|| currentUser.admin){ %>
                                         <form
                                             action="/campgrounds/<%= campgrounds._id %>/reviews/<%= review._id %>?_method=DELETE  "
                                             method="post">

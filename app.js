@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 
+
 const express = require('express');
 const mongoose = require('mongoose');
 const engine = require('ejs-mate');
@@ -13,7 +14,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-
+const mongoSanitize = require('express-mongo-sanitize');
+const MongoStore = require('connect-mongo');
 
 
 const campgroundRouter = require('./routes/campgrounds');
@@ -22,9 +24,10 @@ const UserRouter = require('./routes/user');
 
 
 const User = require('./models/user');
+const localDb ='mongodb://localhost:27017/yelp_camp'
+const dbUrl=process.env.MONGODB_URI || localDb;
 
-
-mongoose.connect('mongodb://localhost:27017/yelp_camp');
+mongoose.connect(localDb);
 
 const db = mongoose.connection;
 
@@ -35,18 +38,31 @@ db.once('open', () => {
 
 
 
-
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+const store = MongoStore.create(
+    {
+        mongoUrl:localDb,
+        secret:'this is a secret',
+        touchAfter:24*3600
+    }
+)
+
+store.on('error', function(error) {
+    console.log("Store error",error);
+})
+
 
 const sessionConfig = {
+    store,
+    name:'session',
     secret: "this is a secret",
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        // secure:true,
         expires: Date.now() + (1000 * 60 * 60 * 24 * 7),
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
@@ -60,10 +76,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+app.use(mongoSanitize({
+    replaceWith: '_',
+  }));
 
+
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+
 
 app.use((req, res, next) => {
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
@@ -76,20 +98,10 @@ app.use((req, res, next) => {
 })
 
 
-
-
-
 app.use('/campgrounds', campgroundRouter);
 app.use('/campgrounds/:id/reviews', reviewRouter);
 app.use('/', UserRouter);
 
-
-
-// app.get('/fakeUser', async (req, res) => {
-//     const user = new User({ email: 'hai@2000', username: 'hai' });
-//     const newUser = await User.register(user, "123");
-//     res.send(newUser);
-// })
 
 
 app.get('/', (req, res) => {

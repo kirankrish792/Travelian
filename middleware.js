@@ -14,18 +14,22 @@ module.exports.isLoggedIn = (req, res, next) => {
 module.exports.isAuthor = async (req, res, next) => {
     const { id } = req.params;
     const campgrounds = await campground.findById(id);
-    if (!campgrounds.author.equals(req.user._id)) {
-        req.flash('error', 'You are not the author of this campground');
-        return res.redirect(`/campgrounds/${id}`);
+    if(!req.user.admin){
+        if (!campgrounds.author.equals(req.user._id)) {
+            req.flash('error', 'You are not the author of this campground');
+            return res.redirect(`/campgrounds/${id}`);
+        }
     }
     next();
 }
 module.exports.isReviewAuthor = async (req, res, next) => {
     const { id, reviewId } = req.params;
     const review = await Review.findById(reviewId);
-    if (!review.author.equals(req.user._id)) {
-        req.flash('error', 'You are not the author of this Review');
-        return res.redirect(`/campgrounds/${id}`);
+    if(!req.user.admin){
+        if (!review.author.equals(req.user._id)) {
+            req.flash('error', 'You are not the author of this Review');
+            return res.redirect(`/campgrounds/${id}`);
+        }
     }
     next();
 }
