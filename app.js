@@ -24,7 +24,7 @@ const UserRouter = require('./routes/user');
 
 
 const User = require('./models/user');
-const dbUrl=process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
+const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
 
 mongoose.connect(dbUrl);
 
@@ -44,20 +44,20 @@ const secret = process.env.SECRET;
 
 const store = new MongoStore(
     {
-        mongoUrl:dbUrl,
+        mongoUrl: dbUrl,
         secret,
-        touchAfter:24*3600
+        touchAfter: 24 * 3600
     }
 )
 
-store.on('error', function(error) {
-    console.log("Store error",error);
+store.on('error', function (error) {
+    console.log("Store error", error);
 })
 
 
 const sessionConfig = {
     store,
-    name:'session',
+    name: 'session',
     secret,
     resave: false,
     saveUninitialized: true,
@@ -79,7 +79,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(mongoSanitize({
     replaceWith: '_',
-  }));
+}));
 
 
 passport.use(new LocalStrategy(User.authenticate()));
@@ -92,6 +92,7 @@ app.use((req, res, next) => {
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
         req.session.returnTo = req.originalUrl;
     }
+    console.log(req.ip);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;
