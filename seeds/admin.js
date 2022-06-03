@@ -7,16 +7,29 @@ if (process.env.NODE_ENV !== 'production') {
 
 const dbUrl = process.env.MONGODB_URI;
 
-mongoose.connect('mongodb://localhost:27017/yelp_camp');
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   console.log('Connected to MongoDB')
-  registerAdmin();
+  inquirer.prompt(choiceQuestion).then(res => {
+    if (res.choice === '1') {
+      return registerAdmin()
+    }
+    upgradeToAdmin()
+  })
 });
 
+
+const choiceQuestion = [
+  {
+    type: 'input',
+    name: 'choice',
+    message: "1 for Register a new admin\n2 For Upgrade a existing User to admin: "
+  }
+]
 
 const questions = [
   {
@@ -33,39 +46,42 @@ const questions = [
     type: 'password',
     name: 'password',
     message: "What's your password?",
-    mask,
+    mask: true
   },
 ];
 
 
-const upgradeToAdmin = ()=>{
-  try{
-      inquirer.prompt(choice).then(async (res)=>{
+const upgradeToAdmin = () => {
+  try {
+    inquirer.prompt(questions[0]).then(async (res) => {
       const { username } = res;
-      const updatedValue = await User.findOneAndUpdate({username}, {admin: true},{new: true});
-      if(!updatedValue){
+      const updatedValue = await User.findOneAndUpdate({ username }, { admin: true }, { new: true });
+      if (!updatedValue) {
         throw new Error('User not found');
       }
       console.log(`success fully upgraded ${username} as admin, congratulations`);
+      process.exit(1);
     })
-  }catch(err){
+  } catch (err) {
     console.dir(err);
+    process.exit(1);
   }
 }
 
-const registerAdmin = ()=>{
-  inquirer.prompt(questions).then(async (res)=>{
-      try{
-        const admin = true
-        const { username, password, email } = res;
-        const newUser = new User({ username, email, admin });
-        const registerUser = await User.register(newUser, password);
-        console.log(`success fully added ${username} as admin, congratulations`);
-      }
-      catch(err){
-        console.log(err);
-      }
-    })
+const registerAdmin = () => {
+  inquirer.prompt(questions).then(async (res) => {
+    try {
+      const admin = true
+      const { username, password, email } = res;
+      const newUser = new User({ username, email, admin });
+      const registerUser = await User.register(newUser, password);
+      console.log(`success fully added ${username} as admin, congratulations`);
+      process.exit(1);
+    }
+    catch (err) {
+      console.log(err);
+      process.exit(1);
+    }
+  })
 }
 
-  
