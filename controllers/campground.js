@@ -41,7 +41,6 @@ module.exports.renderEditCampground = async (req, res) => {
     }
     res.render('campgrounds/edit', { findCampground, id });
 }
-
 module.exports.editCampground = async (req, res) => {
     const { id } = req.params;
     const campgrounds = await campground.findByIdAndUpdate(id, { ...req.body.campground });

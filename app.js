@@ -26,7 +26,7 @@ const UserRouter = require('./routes/user');
 const User = require('./models/user');
 const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
 
-mongoose.connect(dbUrl);
+mongoose.connect("mongodb://localhost:27017/yelp_camp");
 
 const db = mongoose.connection;
 
@@ -92,7 +92,6 @@ app.use((req, res, next) => {
     if (!['/login', '/register', '/'].includes(req.originalUrl)) {
         req.session.returnTo = req.originalUrl;
     }
-    console.log(req.ip);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;

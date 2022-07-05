@@ -1,5 +1,5 @@
 const campground = require('../models/campground');
-const Review = require('../models/review');
+const { Review, reviewRating } = require('../models/review');
 
 
 module.exports.postReview = async (req, res) => {
@@ -22,4 +22,8 @@ module.exports.delete = async (req, res) => {
     await Review.findByIdAndDelete(reviewId);
     req.flash('success', 'Review deleted successfully');
     res.redirect(`/campgrounds/${id}`);
+}
+
+module.exports.reviewRating = async (req, res) => {
+    
 }
