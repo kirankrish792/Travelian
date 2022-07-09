@@ -111,7 +111,6 @@
                                             method="post">
                                             <button class="btn btn-sm btn-danger">Delete</button>
                                         </form>
-<<<<<<< HEAD
                                         <% } %> 
                                             <% if(currentUser && !review.author.equals(currentUser._id)){ %>
                                                 <form action="/campgrounds/<%= campgrounds._id %>/reviews/<%= review._id %>" method="post">
@@ -133,25 +132,6 @@
                                                 </form>
                                             <% } %>  
                                         
-=======
-                                        <% } %>
-                                        <form action="/campgrounds/<%= campgrounds._id %>/reviews/<%= review._id %>" method="post">
-                                        <div class="mt-3">
-                                        <label for="reviewRating">Is This Review Is UseFull ?</label>
-                                        <select class="form-select" id="reviewRating" name="reviewRating[data]" aria-label="Default select example">
-                                            <option selected value="4">Good</option>
-                                            <option value="1">Very Poor</option>
-                                            <option value="2">Poor</option>
-                                            <option value="3">Average</option>
-                                            <option value="4">Good</option>
-                                            <option value="5">Excellent</option>
-                                        </select>
-                                        </div>
-                                        <div class="mt-3">
-                                        <button class="btn btn-success">Submit</button>
-                                        </div>
-                                        </form>
->>>>>>> 374e98b39449131a4f083e50c2e4870357400a25
                             </div>
                         </div>
                         <% } %>
