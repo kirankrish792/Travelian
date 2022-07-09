@@ -67,14 +67,24 @@ module.exports.deleteCampground = async (req, res) => {
 }
 
 module.exports.renderOneCampground = async (req, res) => {
-    const campgrounds = await campground.findById(req.params.id)
-        .populate({
-            path: 'reviews',
-            populate: {
-                path: 'author'
-            }
-        })
-        .populate('author')
+    const campgrounds = await campground
+      .findById(req.params.id)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+        },
+      })
+      .populate("author")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "reviewRating",
+          populate: {
+            path: "author",
+          },
+        },
+      });
     if (!campgrounds) {
         req.flash('error', 'Campground not found');
         return res.redirect('/campgrounds');
