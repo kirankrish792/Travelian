@@ -1,10 +1,6 @@
 const campground = require('../models/campground');
-<<<<<<< HEAD
 const Review = require('../models/review');
 const ReviewRating = require('../models/reviewRating')
-=======
-const { Review, reviewRating } = require('../models/review');
->>>>>>> 374e98b39449131a4f083e50c2e4870357400a25
 
 
 module.exports.postReview = async (req, res) => {
@@ -29,7 +25,6 @@ module.exports.delete = async (req, res) => {
     res.redirect(`/campgrounds/${id}`);
 }
 
-<<<<<<< HEAD
 module.exports.postRating = async(req,res)=>{
     const {id, reviewId } = req.params;
     const review = await Review.findById(reviewId).populate("reviewRating");
@@ -53,8 +48,4 @@ module.exports.postRating = async(req,res)=>{
     await review.save();
     req.flash('success',"Rated Review Successfully")
     res.redirect(`/campgrounds/${id}`);
-=======
-module.exports.reviewRating = async (req, res) => {
-    
->>>>>>> 374e98b39449131a4f083e50c2e4870357400a25
 }
