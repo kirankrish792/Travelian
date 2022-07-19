@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-const dbUrl = process.env.MONGODB_URI;
+const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
 
 mongoose.connect(dbUrl);
 
@@ -55,7 +55,10 @@ const upgradeToAdmin = () => {
   try {
     inquirer.prompt(questions[0]).then(async (res) => {
       const { username } = res;
-      const updatedValue = await User.findOneAndUpdate({ username }, { admin: true }, { new: true });
+      const updatedValue = await User.findOneAndUpdate(
+        { username },
+        { isAdmin: true },
+      );
       if (!updatedValue) {
         throw new Error('User not found');
       }
@@ -71,9 +74,9 @@ const upgradeToAdmin = () => {
 const registerAdmin = () => {
   inquirer.prompt(questions).then(async (res) => {
     try {
-      const admin = true
+      const isAdmin = true
       const { username, password, email } = res;
-      const newUser = new User({ username, email, admin });
+      const newUser = new User({ username, email, isAdmin });
       const registerUser = await User.register(newUser, password);
       console.log(`success fully added ${username} as admin, congratulations`);
       process.exit(1);

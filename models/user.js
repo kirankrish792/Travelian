@@ -8,11 +8,23 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    admin:{
+    isAdmin:{
         type: Boolean,
         default: false,
         required: true
-    }
+    },
+    campgrounds:[
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Campground'
+        }
+    ],
+    reviews:[
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Review'
+        }
+    ]
 })
 
 userSchema.plugin(passportLocalMongoose);

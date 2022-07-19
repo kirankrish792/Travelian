@@ -21,6 +21,7 @@ const MongoStore = require('connect-mongo');
 const campgroundRouter = require('./routes/campgrounds');
 const reviewRouter = require('./routes/reviews');
 const UserRouter = require('./routes/user');
+const adminRouter = require('./routes/admin');
 
 
 const User = require('./models/user');
@@ -89,10 +90,8 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.use((req, res, next) => {
-    if (!['/login', '/register', '/'].includes(req.originalUrl)) {
-        req.session.returnTo = req.originalUrl;
-    }
-    console.log(req.ip);
+    res.locals.originalUrl = req.originalUrl;
+    req.session.returnTo = req.originalUrl;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;
@@ -103,7 +102,7 @@ app.use((req, res, next) => {
 app.use('/campgrounds', campgroundRouter);
 app.use('/campgrounds/:id/reviews', reviewRouter);
 app.use('/', UserRouter);
-
+app.use('/admin', adminRouter);
 
 
 app.get('/', (req, res) => {

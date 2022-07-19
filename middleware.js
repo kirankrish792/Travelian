@@ -11,10 +11,18 @@ module.exports.isLoggedIn = (req, res, next) => {
     next();
 }
 
+module.exports.isAdmin = (req, res, next) => {
+    if (!req.user.isAdmin) {
+        req.flash('error', 'You must be an admin to do that');
+        return res.redirect('/campgrounds');
+    }
+    next();
+}
+
 module.exports.isAuthor = async (req, res, next) => {
     const { id } = req.params;
     const campgrounds = await campground.findById(id);
-    if(!req.user.admin){
+    if(!req.user.isAdmin){
         if (!campgrounds.author.equals(req.user._id)) {
             req.flash('error', 'You are not the author of this campground');
             return res.redirect(`/campgrounds/${id}`);

@@ -1,0 +1,47 @@
+<% layout('layouts/Dashboard') %>
+
+ 
+            <h2>All campgrounds</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sl.No</th>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">No of Rating</th>
+                                <th scope="col">Avg-Rating</th>
+                                <th scope="col">Verified</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% campgrounds.forEach((campground,index)=>{ %>
+                                <tr>
+                                    <td><%= index+1 %> </td>
+                                    <td><%= campground._id %> </td>
+                                    <td><a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a></td>
+                                    <td><%= campground.author.username %></td>
+                                    <td><%= campground.reviews.length %></td>
+                                    <td><%= campground.averageRating %> </td>
+                                    <td><%= campground.verification %> </td>
+                                    <td>
+                                        <% if(campground.verification === 'pending'){ %>
+                                            <form action="/admin/campgrounds/<%= campground._id %>/verify" method="post">
+                                                <button class="btn btn-danger" value="rejected" name="verification[value]">Reject</button>
+                                                <button class="btn btn-success" value="verified" name="verification[value]">Accept</button>
+                                            </form>
+                                        <% }else if(campground.verification === "rejected"){ %>
+                                            <form action="/admin/campgrounds/<%= campground._id %>/verify" method="post">
+                                                <button class="btn btn-danger" value="false" name="verification[value]">Accept verification</button>
+                                            </form>
+                                            <% } %>  
+                                    </td>
+                                </tr>
+
+                                <% }) %>  
+                            
+                        </tbody>
+                    </table>
+                </div>

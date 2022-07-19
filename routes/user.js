@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport');
-const User = require('../models/user')
 const { isLoggedIn } = require('../middleware');
 const user = require('../controllers/user')
 

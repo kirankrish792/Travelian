@@ -23,6 +23,9 @@ router.route('/:id')
     .get(catchAsync(campgrounds.renderOneCampground))
 
 
+router.route('/:id/verify')
+    .post(isLoggedIn, isAuthor, catchAsync(campgrounds.verifyCampground))
+
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditCampground))
 
 

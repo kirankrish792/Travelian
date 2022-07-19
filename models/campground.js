@@ -38,12 +38,26 @@ const campgroundSchema = new Schema({
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: 'Review'
-    }]
+    }],
+    verification: {
+        type: String,
+        enum: ['pending', 'verified', 'rejected',false],   
+        default: false,
+        required: true,
+    }
 },opts);
 
 campgroundSchema.virtual('properties.popUpMarkup').get(function () {
     return `<strong><a href="/campgrounds/${this._id}">${this.title}</a><strong><p>${this.description.substring(0, 20)}...</p>`
 });
+
+campgroundSchema.virtual('averageRating').get(function () {
+    if (this.reviews.length === 0) {
+        return 0;
+    }
+    const ratings = this.reviews.map(review => review.rating);
+    return ratings.reduce((sum, rating) => sum + rating) / ratings.length;
+})
 
 campgroundSchema.post('findOneAndDelete', async doc => {
     if (doc) {

@@ -1,0 +1,166 @@
+<% layout('layouts/Dashboard') %>
+
+<style>
+    body {
+  font-size: .875rem;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #727272;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+</style>
+
+<h2>All Users</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Sl.No</th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">No of Reviews</th>
+                <th scope="col">No of Verified Reviews</th>
+                <th scope="col">Campgrounds</th>
+                <th scope="col">Verified Campgrounds</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach((user,index)=>{ %>
+                <tr>
+                    <td>
+                        <%= index+1 %>
+                    </td>
+                    <td>
+                        <%= user._id %>
+                    </td>
+                    <td>
+                            <%= user.username %>
+                    </td>
+                    <td>
+                        <%= user.email %>
+                    </td>
+                    <td>
+                        <%= user.reviews.length %>
+                    </td>
+                    <td>
+                        <%= user.reviews.filter(x=>x.certified === true).length %>
+                    </td>
+                    <td>
+                        <% if(user.campgrounds.length){ %> 
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Campgrounds
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <%for(let campground of user.campgrounds){ %>
+                                    <li><a class="dropdown-item" href="/campgrounds/<%= campground._id %>">
+                                        <%= campground.title %>
+                                    </a></li>
+                                    <% } %>
+                            </ul>
+                        </div>
+                        <% } else { %>
+                            <p>No campgrounds</p>
+                            <% } %>  
+                        
+                    </td>
+                    <td>
+                        <%= user.campgrounds.filter(x=>x.verification === 'verified').length %>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+    </table>
+</div>
