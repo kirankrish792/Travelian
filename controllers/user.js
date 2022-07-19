@@ -32,7 +32,7 @@ module.exports.login = async (req, res) => {
     const redirectUrl = req.session.returnTo || '/campgrounds';
     delete req.session.returnTo;
     if(req.user.isAdmin) {
-        res.redirect('/admin');
+        return res.redirect('/admin');
     }
     res.redirect(redirectUrl);
 }
