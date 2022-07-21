@@ -1,5 +1,7 @@
 const campground = require("../models/campground");
 const User = require("../models/user");
+const review = require("../models/review");
+const { cloudinary } = require("../cloudinary");
 
 module.exports.dashboard = async (req, res) => {
     const campgrounds = await campground.find({})
@@ -31,4 +33,18 @@ module.exports.users = async (req, res) => {
     .populate("campgrounds")
     .populate("reviews");
     res.render("admin/users",{users});
+}
+
+module.exports.deleteUser = async (req, res) => {
+    const id = req.params.id;
+    const user = await User.findById(id).populate("campgrounds");
+    for(let campground of user.campgrounds){
+        for(image of campground.images){
+            await cloudinary.uploader.destroy(image.filename);
+        }
+    }
+    await campground.deleteMany({_id: {$in: user.campgrounds}});
+    await review.deleteMany({_id: {$in: user.reviews}});
+    await user.remove();
+    res.redirect("/admin/users");
 }

@@ -159,6 +159,11 @@
                     <td>
                         <%= user.campgrounds.filter(x=>x.verification === 'verified').length %>
                     </td>
+                    <td>
+                      <form action="/admin/users/<%= user._id %>?_method=DELETE" method="post">
+                        <button class="btn btn-danger">Delete</button>
+                      </form>
+                    </td>
                 </tr>
                 <% }) %>
         </tbody>

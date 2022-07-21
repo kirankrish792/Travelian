@@ -12,4 +12,7 @@ router
   .route("/campgrounds/:id/verify")
   .post(isLoggedIn, isAdmin, admin.verifyCampgroundAdmin);
 
+router.route("/users/:id")
+  .delete(admin.deleteUser);
+
 module.exports = router;
