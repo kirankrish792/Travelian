@@ -43,6 +43,9 @@ module.exports.deleteUser = async (req, res) => {
             await cloudinary.uploader.destroy(image.filename);
         }
     }
+    if (user.images) {
+      await cloudinary.uploader.destroy(user.images.filename);
+    }
     await campground.deleteMany({_id: {$in: user.campgrounds}});
     await review.deleteMany({_id: {$in: user.reviews}});
     await user.remove();
