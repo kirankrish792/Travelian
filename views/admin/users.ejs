@@ -106,12 +106,15 @@
             <tr>
                 <th scope="col">Sl.No</th>
                 <th scope="col">Id</th>
+                <th scope="col">User name</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
+                <th scope="col">Ph:No</th>
                 <th scope="col">No of Reviews</th>
                 <th scope="col">No of Verified Reviews</th>
                 <th scope="col">Campgrounds</th>
                 <th scope="col">Verified Campgrounds</th>
+                <th scope="col">Verified</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -125,10 +128,22 @@
                         <%= user._id %>
                     </td>
                     <td>
-                            <%= user.username %>
+                       <a href="/user/<%= user._id %>"><%= user.username %></a>
+                    </td>
+                    <td>
+                        <%= user.name %><% if(user.verification === "verified"){ %>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="Blue" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                                </svg>
+                          <% } %>  
                     </td>
                     <td>
                         <%= user.email %>
+                    </td>
+                    <td>
+                        <%= user.number %>
                     </td>
                     <td>
                         <%= user.reviews.length %>
@@ -160,9 +175,22 @@
                         <%= user.campgrounds.filter(x=>x.verification === 'verified').length %>
                     </td>
                     <td>
+                        <%= user.verification %>
+                    </td>
+                    <td>
                       <form action="/admin/users/<%= user._id %>?_method=DELETE" method="post">
                         <button class="btn btn-danger">Delete</button>
                       </form>
+                      <% if(user.verification === 'pending'){ %>
+                                            <form action="/admin/user/<%= user._id %>/verify" method="post">
+                                                <button class="btn btn-danger" value="rejected" name="verification[value]">Reject</button>
+                                                <button class="btn btn-success" value="verified" name="verification[value]">Accept</button>
+                                            </form>
+                                        <% }else if(user.verification === "rejected"){ %>
+                                            <form action="/admin/user/<%= user._id %>/verify" method="post">
+                                                <button class="btn btn-danger" value="false" name="verification[value]">Accept verification</button>
+                                            </form>
+                                            <% } %>  
                     </td>
                 </tr>
                 <% }) %>

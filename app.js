@@ -71,6 +71,7 @@ const sessionConfig = {
 }
 
 app.use(session(sessionConfig));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.engine('ejs', engine);

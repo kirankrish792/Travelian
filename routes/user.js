@@ -21,5 +21,10 @@ router.get('/profile', isLoggedIn, user.profile)
 
 router.route('/user/:id')
 .get(user.getUser)
+.put(isLoggedIn,upload.single("image"), user.updateUser)
+
+router.route("/user/:id/image").get(isLoggedIn,user.deleteUserImage);
+
+router.route("/user/verify/profile").get(isLoggedIn,user.verifyProfile);
 
 module.exports = router;

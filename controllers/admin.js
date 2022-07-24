@@ -24,7 +24,6 @@ module.exports.verifyCampgroundAdmin = async (req, res) => {
     }
     campgrounds.verification = req.body.verification.value;
     await campgrounds.save();
-    req.flash('success', 'Application sent successfully');
     res.redirect(`/admin`);
 }
 
@@ -51,3 +50,15 @@ module.exports.deleteUser = async (req, res) => {
     await user.remove();
     res.redirect("/admin/users");
 }
+
+module.exports.verifyUserAdmin = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    req.flash("error","User not found");
+    return res.redirect("/admin/users");
+  }
+  user.verification = req.body.verification.value;
+  await user.save();
+  res.redirect(`/admin/users`);
+};

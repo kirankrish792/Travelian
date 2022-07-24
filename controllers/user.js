@@ -79,3 +79,50 @@ module.exports.getUser = async (req, res) => {
     const user = await User.findById(req.params.id).populate('campgrounds').populate('reviews');
     res.render('User/profile', { user });
 }
+
+module.exports.updateUser = async (req, res) => {
+    try{
+        const user = await User.findById(req.user._id);
+        if(req.file) {
+            if (user.images) {
+              await cloudinary.uploader.destroy(user.images.filename);
+            }
+            const image = {url: req.file.path, filename: req.file.filename};
+            user.images = image;
+        }
+        user.username = req.body.username;
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.number = req.body.number;
+        await user.save();
+        req.flash('success', 'User updated successfully');
+        res.redirect('/profile');
+    }
+    catch(err) {
+        req.flash('error', err.message);
+        res.redirect('/profile');
+    }
+}
+
+module.exports.deleteUserImage = async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (user.images) {
+      await cloudinary.uploader.destroy(user.images.filename);
+    }
+    user.images = undefined;
+    await user.save();
+    req.flash('success', 'User image deleted successfully');
+    res.redirect('/profile');
+}
+
+module.exports.verifyProfile = async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      req.flash("error", "User not found");
+      return res.redirect("/profile");
+    }
+    user.verification = "pending";
+    await user.save();
+    req.flash("success", "Application sent successfully");
+    res.redirect(`/profile`);
+};

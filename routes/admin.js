@@ -15,4 +15,7 @@ router
 router.route("/users/:id")
   .delete(admin.deleteUser);
 
+  router.route("/user/:id/verify")
+  .post(isLoggedIn, isAdmin, admin.verifyUserAdmin);
+
 module.exports = router;

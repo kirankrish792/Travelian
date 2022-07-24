@@ -251,7 +251,6 @@
 </head>
 
 <body class="bg-light">
-
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/">Travelian</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
@@ -289,7 +288,13 @@
                         <li class="nav-item">
                             <b>
                                 <p class="text-center">
-                                    <%= user.name %>
+                                    <%= user.name %><% if(user.verification === "verified"){ %>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="Black" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                                </svg>
+                          <% } %>
                                 </p>
                             </b>
                         </li>
@@ -319,13 +324,30 @@
                         <% if(currentUser && user.equals(currentUser._id)){ %> 
                         <li class="nav-item">
                             <span class="nav-link">
-                                <button class="btn btn-warning">Edit</button>
+                                <button class="btn btn-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Edit</button>
                                 <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Delete</button>
-
-
                             </span>
+                            <% if(user.images){ %> 
+                            <div class="nav-link">
+                                <a class="btn btn-secondary" href="/user/<%= user._id %>/image">Remove Profile photo</a>
+                            </div>
+                            <% } %>
+                            <% if((user.reviews.filter(x=> x.certified===true).length/user.reviews.length)*100 >70 ){%>
+                                <% if(user.verification === "false" ){ %> 
+                                <div class="nav-link">
+                                <a class="btn btn-info" href="/user/verify/profile">Apply for verification</a>
+                                </div>
+                                <% }else if(user.verification === "pending"){ %>
+                                    <p class="nav-link">Waiting for admin verification</p>
+                                    <% }else if (user.verification === "rejected") {%>
+                                    <i class="nav-link">Your Request Rejected by the Admin: you can request again in few days</i>
+                                    <% }else if(user.verification === "verified"){ %>
+                                        <i class="nav-link">Congratulations Campground Verified Successfully</i>
+                                        <% } %>
+                                  
                         </li>
+                        <% } %> 
                         <% } %> 
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="#">
@@ -421,6 +443,7 @@
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <%- include('../partials/flash') %>
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Dashboard</h1>
@@ -528,6 +551,56 @@
             </div>
         </div>
     </div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Edit profile</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body small">
+   <div class="card-body">
+                    <form action="/user/<%= user._id %>?_method=PUT" method="POST" class="validated-form" novalidate enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Username</label>
+                            <input class="form-control" type="text" id="username" name="username" value="<%= user.username %>" required autofocus>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a Username.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="name">Name</label>
+                            <input class="form-control" type="text" id="name" name="name" value="<%= user.name %>" required autofocus>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a Name.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" type="email" id="email" name="email" value="<%= user.email %>" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a Email.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="ph.">ph.</label>
+                            <input class="form-control" type="ph." id="ph." name="number" value="<%= user.number %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFileMultiple" class="form-label">Add images</label>
+                            <input class="form-control" name="image" type="file" id="formFileMultiple">
+                        </div>
+                        <button class="btn btn-success btn-block">Update</button>
+                    </form>
+  </div>
+</div>
     <% } %> 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -540,3 +613,5 @@
 </body>
 
 </html>
+
+

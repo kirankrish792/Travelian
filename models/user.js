@@ -16,18 +16,18 @@ ImageSchema.virtual("avatar").get(function () {
 
 
 const userSchema = new Schema({
-  name:{
+  name: {
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 50
+    maxlength: 50,
   },
   number: {
     type: String,
     required: true,
     minlength: 10,
     maxlength: 10,
-    default: '0000000000'
+    default: "0000000000",
   },
   email: {
     type: String,
@@ -52,6 +52,12 @@ const userSchema = new Schema({
       ref: "Review",
     },
   ],
+  verification: {
+    type: String,
+    enum: ["pending", "verified", "rejected", false],
+    default: false,
+    required: true,
+  },
 });
 
 userSchema.virtual("width").get(function () {
