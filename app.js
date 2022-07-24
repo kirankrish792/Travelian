@@ -100,6 +100,7 @@ app.use((req, res, next) => {
 })
 
 
+
 app.use('/campgrounds', campgroundRouter);
 app.use('/campgrounds/:id/reviews', reviewRouter);
 app.use('/', UserRouter);
