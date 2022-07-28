@@ -16,6 +16,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongoSanitize = require('express-mongo-sanitize');
 const MongoStore = require('connect-mongo');
+const compression = require("compression");
 
 
 const campgroundRouter = require('./routes/campgrounds');
@@ -82,6 +83,17 @@ app.use(passport.session());
 app.use(mongoSanitize({
     replaceWith: '_',
 }));
+app.use(compression({ filter: shouldCompress }));
+
+function shouldCompress(req, res) {
+  if (req.headers["x-no-compression"]) {
+    // don't compress responses with this request header
+    return false;
+  }
+
+  // fallback to standard filter function
+  return compression.filter(req, res);
+}
 
 
 passport.use(new LocalStrategy(User.authenticate()));
