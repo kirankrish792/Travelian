@@ -5,7 +5,7 @@ const cities = require('./cities');
 const { places, descriptors } = require('./seedHelper');
 
 
-mongoose.connect('mongodb://localhost:27017/yelp_camp');
+mongoose.connect('mongodb://127.0.0.1/yelp_camp');
 
 const db = mongoose.connection;
 
@@ -20,11 +20,11 @@ const price = Math.floor(Math.random() * 100) + 10;
 
 const seedDb = async () => {
     await campground.deleteMany({});
-    const user = await User.findById("62d39c75d92f69543c911208");
+    const user = await User.findById("62ea40d1866afe8ec0ffe1ee");
     for (let i = 0; i < 300; i++) {
         const random1000 = Math.floor(Math.random() * 1000);
         const newCampground = new campground({
-          author: "62d39c75d92f69543c911208",
+          author: "62ea40d1866afe8ec0ffe1ee",
           title: `${descriptors[sample(descriptors)]} ${
             places[sample(places)]
           }`,

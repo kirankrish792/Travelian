@@ -26,7 +26,7 @@ const adminRouter = require('./routes/admin');
 
 
 const User = require('./models/user');
-const dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/yelp_camp';
+const dbUrl = process.env.MONGODB_URI || 'mongodb://127.0.0.1/yelp_camp';
 
 mongoose.connect(dbUrl);
 
