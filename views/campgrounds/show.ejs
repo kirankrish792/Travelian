@@ -149,7 +149,7 @@
                                         </form>
                                         <% } %> 
                                             <% if(currentUser && !review.author.equals(currentUser._id)){ %>
-                                                <% if(review.reviewRating.filter(x => x.author.equals(currentUser)).length<=0){ %> 
+                                                <% if(review.reviewRating.author && review.reviewRating.filter(x => x.author.equals(currentUser._id)).length<=0 || review.reviewRating.author===undefined){ %> 
                                                 <form action="/campgrounds/<%= campgrounds._id %>/reviews/<%= review._id %>" method="post">
                                                     <div class="mt-3">
                                                         <label for="reviewRating">Is This Review Is UseFull ?</label>

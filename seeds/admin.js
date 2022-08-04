@@ -39,6 +39,11 @@ const questions = [
   },
   {
     type: 'input',
+    name: 'name',
+    message: "What's your name?",
+  },
+  {
+    type: 'input',
     name: 'email',
     message: "What's your email?",
   },
@@ -75,8 +80,8 @@ const registerAdmin = () => {
   inquirer.prompt(questions).then(async (res) => {
     try {
       const isAdmin = true
-      const { username, password, email } = res;
-      const newUser = new User({ username, email, isAdmin });
+      const { username, password, email,name } = res;
+      const newUser = new User({ username, email, isAdmin,name });
       const registerUser = await User.register(newUser, password);
       console.log(`success fully added ${username} as admin, congratulations`);
       process.exit(1);
